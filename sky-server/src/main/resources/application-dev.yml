@@ -11,4 +11,12 @@ sky:
     bucket-name: myjavaweb-sky
     endpoint: oss-cn-beijing.aliyuncs.com
 
-#
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 0
+
+  wechat:
+    appid: wx73e6886cd9a0135f
+    secret: 935d728b54b97f16a69d9ce3aa069ecb
