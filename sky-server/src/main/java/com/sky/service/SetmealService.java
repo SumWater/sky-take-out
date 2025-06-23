@@ -36,4 +36,5 @@ public interface SetmealService {
      */
     List<DishItemVO> getDishItemById(Long id);
 
+    Setmeal getById(Long setmealId);
 }
