@@ -40,7 +40,7 @@
                 tableware_status = #{tablewareStatus},
             </if>
         </set>
-        where number = #{number}
+        where id = #{id} or number = #{number}
     </update>
     <select id="pageQuery" resultType="com.sky.entity.Orders">
         select * from orders
