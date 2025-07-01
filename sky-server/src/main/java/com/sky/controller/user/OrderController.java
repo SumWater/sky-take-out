@@ -41,6 +41,8 @@ public class OrderController {
         OrderPaymentVO orderPaymentVO =new OrderPaymentVO("prepay_id", "paySign", "timeStamp", "signType", "packageStr");
         log.info("支付参数：{}", ordersPaymentDTO);
         orderService.payment(ordersPaymentDTO);
+
+
         return Result.success(orderPaymentVO);
     }
 
@@ -73,6 +75,14 @@ public class OrderController {
     public Result repetition(@PathVariable Long id) {
         log.info("再来一单：{}", id);
         orderService.repetition(id);
+        return Result.success();
+    }
+
+    @GetMapping("/reminder/{id}")
+    @ApiOperation("催单")
+    public Result reminder(@PathVariable Long id) {
+        log.info("催单：{}", id);
+        orderService.reminder(id);
         return Result.success();
     }
 }
