@@ -5,7 +5,12 @@ import com.sky.entity.User;
 import com.sky.enumeration.OperationType;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface UserMapper {
@@ -19,4 +24,12 @@ public interface UserMapper {
     User getByOpenid(String openid);
 
     void insert(User user);
+    /**
+     *  用户统计 新用户数
+     * @param dateList
+     * @return
+     */
+    List<Integer> getNewUserStatistics(List<LocalDate> dateList);
+
+    Integer countByMap(Map map);
 }

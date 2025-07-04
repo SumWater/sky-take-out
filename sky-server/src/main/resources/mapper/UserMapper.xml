@@ -9,4 +9,45 @@
         values (#{openid},#{name}, #{sex}, #{phone},#{avatar},#{idNumber}, #{createTime})
 
     </insert>
+
+    <select id="getNewUserStatistics" resultType="java.lang.Integer">
+        SELECT
+        COUNT(u.id) AS daily_count  <!-- 注意：这里使用u.id，如果id为null则count为0 -->
+        FROM (
+        <foreach collection="dateList" item="date" separator=" UNION ALL ">
+            SELECT #{date} AS query_date
+        </foreach>
+        ) AS dates
+        LEFT JOIN user u
+        ON DATE(u.create_time) = dates.query_date
+        GROUP BY dates.query_date
+        ORDER BY dates.query_date
+    </select>
+
+    <select id="getTotalUserStatistics" resultType="java.lang.Integer">
+        WITH input_dates(date_val) AS (
+        VALUES
+        <foreach collection="dateList" item="date" separator=",">
+            (#{date})
+        </foreach>
+        )
+        SELECT
+        COUNT(u.id) AS user_count
+        FROM input_dates d
+        LEFT JOIN user u
+        ON DATE(u.create_time) = d.date_val
+        GROUP BY d.date_val
+        ORDER BY d.date_val
+    </select>
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from user
+        <where>
+            <if test="begin != null">
+                    and create_time &gt;= #{begin}
+            </if>
+            <if test="end!= null">
+                    and create_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
 </mapper>

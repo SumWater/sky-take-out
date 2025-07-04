@@ -67,4 +67,82 @@
         order by order_time desc
     </select>
 
+    <select id="getTurnoverStatistics" resultType="java.lang.Double">
+        SELECT
+        COALESCE(SUM(
+        CASE
+        WHEN DATE(orders.order_time) = d.date_val AND orders.status = #{status}
+        THEN orders.amount
+        ELSE 0
+        END
+        ), 0.0) AS daily_total
+        FROM (
+        <foreach collection="dateList" item="date" separator=" UNION ALL ">
+            SELECT #{date} AS date_val
+        </foreach>
+        ) d
+        LEFT JOIN orders ON DATE(orders.order_time) = d.date_val
+        GROUP BY d.date_val
+        ORDER BY d.date_val
+    </select>
+
+
+    <select id="getOrderCountStatistics" resultType="java.lang.Integer">
+        SELECT
+        COALESCE(COUNT(o.id), 0) AS order_count
+        FROM (
+        <foreach collection="dateList" item="date" separator=" UNION ALL ">
+            SELECT #{date} AS query_date
+        </foreach>
+        ) AS dates
+        LEFT JOIN orders o
+        ON DATE(o.order_time) = dates.query_date
+        GROUP BY dates.query_date
+        ORDER BY dates.query_date
+    </select>
+
+
+    <select id="getValidOrderCountStatistics" resultType="java.lang.Integer">
+        SELECT COALESCE(COUNT(o.id), 0) AS order_count
+        FROM (
+        <foreach collection="dateList" item="date" separator=" UNION ALL ">
+            SELECT #{date} AS query_date
+        </foreach>
+        ) AS dates
+        LEFT JOIN orders o ON DATE(o.order_time) = dates.query_date AND o.status = #{status}
+        GROUP BY dates.query_date
+        ORDER BY dates.query_date
+    </select>
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from orders
+        <where>
+            <if test="begin != null">
+                and order_time &gt;= #{begin}
+            </if>
+            <if test="end!= null">
+                and order_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
+    <select id="sumByMap" resultType="java.lang.Double">
+        select sum(amount) from orders
+        <where>
+            <if test="begin!= null">
+                and order_time &gt;= #{begin}
+            </if>
+            <if test="end!= null">
+                and order_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
+    <select id="getSalesTop10" resultType="com.sky.dto.GoodsSalesDTO">
+        select od.name, sum(od.number) number
+        from order_detail od, orders o
+        where od.order_id = o.id and o.status = 5 and o.order_time &gt;= #{begin} and o.order_time &lt;= #{end}
+        group by od.name
+        order by number desc
+        limit 0,10
+    </select>
+
+
 </mapper>
